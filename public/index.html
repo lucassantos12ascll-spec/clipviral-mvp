@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViralCut 🎬</title>
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    input, select, button {
+      margin: 8px;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background: #ff0055;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff3366;
+    }
+    .container {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px #ff005588;
+      width: 90%;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 ViralCut</h1>
+    <p>Crie cortes virais de 30s a 1min com legendas automáticas</p>
+
+    <input type="text" id="youtubeUrl" placeholder="Cole o link do YouTube aqui"><br>
+    <label>Cor da legenda:</label>
+    <input type="color" id="subtitleColor" value="#ffffff"><br>
+    <label>Formato da legenda:</label>
+    <select id="subtitleCase">
+      <option value="upper">MAIÚSCULAS</option>
+      <option value="lower">minúsculas</option>
+    </select><br>
+
+    <button onclick="createJob()">🎥 Criar corte</button>
+
+    <p id="status"></p>
+  </div>
+
+  <script>
+    async function createJob() {
+      const youtubeUrl = document.getElementById("youtubeUrl").value;
+      const subtitleColor = document.getElementById("subtitleColor").value;
+      const subtitleCase = document.getElementById("subtitleCase").value;
+      const statusEl = document.getElementById("status");
+
+      if (!youtubeUrl) return alert("Cole o link do YouTube!");
+
+      statusEl.innerText = "Criando corte... aguarde ⏳";
+
+      const res = await fetch("/api/create-job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ youtubeUrl, clipDurationMin: 30, clipDurationMax: 60, subtitleColor, subtitleCase })
+      });
+
+      const data = await res.json();
+      if (data.jobId) {
+        statusEl.innerText = `✅ Corte criado! ID: ${data.jobId}`;
+      } else {
+        statusEl.innerText = "❌ Erro ao criar corte.";
+      }
+    }
+  </script>
+</body>
+</html>
