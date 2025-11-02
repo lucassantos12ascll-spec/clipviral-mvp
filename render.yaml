@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: viralcut
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "npm start"
+    envVars:
+      NODE_VERSION: 18
